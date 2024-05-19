@@ -26,4 +26,24 @@ impl CASPasswordHasher for CASScrypt {
             .verify_password(password_to_verify.as_bytes(), &parsed_hash)
             .is_ok();
     }
+
+    fn hash__password_threadpool(password: String) -> String {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let hash = Self::hash_password(password);
+            sender.send(hash);
+        });
+        let hash = receiver.recv().unwrap();
+        hash
+    }
+
+    fn verify_password_threadpool(hashed_password: String, password_to_verify: String) -> bool {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let hash = Self::verify_password(hashed_password, password_to_verify);
+            sender.send(hash);
+        });
+        let hash = receiver.recv().unwrap();
+        hash
+    }
 }
