@@ -3,7 +3,7 @@
 [![image](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/7bXXCQj45q)
 
 ## Overview
-This is our experimental core library which \\takes advantage of Rust's thread safe nature to provide an abstraction layer to higher level languages to run industry standard crytographic operations sequentially and in parallel. 
+This is our experimental core library which takes advantage of Rust's thread safe nature to provide an abstraction layer to higher level languages to run industry standard crytographic operations sequentially and in parallel. 
 
 ## Consuming Library Documentation
 We utilize some smart people's existing work and we believe their documentation should be reviewed when possible.
