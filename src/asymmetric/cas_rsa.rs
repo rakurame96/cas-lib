@@ -138,7 +138,11 @@ impl CASRSAEncryption for CASRSA {
             );
             sender.send(verified.is_err());
         });
-        let result = receiver.recv().unwrap();
-        result
+        let verified = receiver.recv().unwrap();
+        if verified == false {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
