@@ -39,3 +39,8 @@ pub mod sponges {
     pub mod cas_ascon_aead;
     pub mod ascon_aead;
 }
+
+pub mod message {
+    pub mod hmac;
+    pub mod cas_hmac;
+}
