@@ -1,8 +1,7 @@
 use aes_gcm::Key;
 
 use rand::rngs::OsRng;
-use rand::{RngCore, SeedableRng};
-use rand_chacha::ChaCha20Rng;
+use rand::RngCore;
 
 use aes_gcm::{
     aead::{generic_array::GenericArray, Aead},
@@ -44,6 +43,19 @@ impl CASAESEncryption for CASAES256 {
         };
         result
     }
+    
+    fn generate_nonce() -> Vec<u8> {
+        let rng = &mut OsRng;
+        let mut random_bytes = Vec::with_capacity(12);
+        random_bytes.resize(12, 0);
+        rng.fill_bytes(&mut random_bytes);
+        random_bytes
+    }
+    
+    fn key_from_vec(key_slice: Vec<u8>) -> Vec<u8> {
+        let result = Key::<Aes256Gcm>::from_slice(&key_slice).to_vec();
+        result
+    }
 }
 
 impl CASAESEncryption for CASAES128 {
@@ -77,6 +89,19 @@ impl CASAESEncryption for CASAES128 {
             aes_key: aes_key_slice.to_vec(),
             aes_nonce: aes_nonce.to_vec(),
         };
+        result
+    }
+    
+    fn generate_nonce() -> Vec<u8> {
+        let rng = &mut OsRng;
+        let mut random_bytes = Vec::with_capacity(12);
+        random_bytes.resize(12, 0);
+        rng.fill_bytes(&mut random_bytes);
+        random_bytes
+    }
+    
+    fn key_from_vec(key_slice: Vec<u8>) -> Vec<u8> {
+        let result = Key::<Aes128Gcm>::from_slice(&key_slice).to_vec();
         result
     }
 }
