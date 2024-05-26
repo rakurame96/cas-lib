@@ -1,9 +1,13 @@
 extern crate ed25519_dalek;
 extern crate rand;
 
+use std::sync::mpsc;
+
 use ed25519_dalek::Signer;
 use ed25519_dalek::{Keypair, PublicKey, Signature, Verifier};
 use rand_07::rngs::OsRng;
+
+use crate::message;
 
 use super::cas_ed25519::Ed25519ByteSignature;
 
@@ -12,6 +16,16 @@ pub fn get_ed25519_key_pair() -> Vec<u8> {
     let keypair = Keypair::generate(&mut csprng);
     let keypair_vec = keypair.to_bytes().to_vec();
     keypair_vec
+}
+
+pub fn get_ed25519_key_pair_threadpool() -> Vec<u8> {
+    let (sender, receiver) = mpsc::channel();
+    rayon::spawn(move || {
+        let result = get_ed25519_key_pair();
+        sender.send(result);
+    });
+    let result = receiver.recv().unwrap();
+    result
 }
 
 pub fn ed25519_sign_with_key_pair(key_pair: Vec<u8>, message_to_sign: Vec<u8>) -> Ed25519ByteSignature {
@@ -26,11 +40,32 @@ pub fn ed25519_sign_with_key_pair(key_pair: Vec<u8>, message_to_sign: Vec<u8>) -
     result
 }
 
+pub fn ed25519_sign_with_key_pair_threadpool(key_pair: Vec<u8>, message_to_sign: Vec<u8>) -> Ed25519ByteSignature {
+    let (sender, receiver) = mpsc::channel();
+    rayon::spawn(move || {
+        let result = ed25519_sign_with_key_pair(key_pair, message_to_sign);
+        sender.send(result);
+    });
+    let result = receiver.recv().unwrap();
+    result
+}
+
+
 pub fn ed25519_verify_with_key_pair(key_pair: Vec<u8>, signature: Vec<u8>, message: Vec<u8>) -> bool {
     let keypair = Keypair::from_bytes(&key_pair).unwrap();
     let public_key = keypair.public;
     let signature = Signature::from_bytes(&signature).unwrap();
     return public_key.verify(&message, &signature).is_ok();
+}
+
+pub fn ed25519_verify_with_key_pair_threadpool(key_pair: Vec<u8>, signature: Vec<u8>, message: Vec<u8>) -> bool {
+    let (sender, receiver) = mpsc::channel();
+    rayon::spawn(move || {
+        let result = ed25519_verify_with_key_pair(key_pair, signature, message);
+        sender.send(result);
+    });
+    let result = receiver.recv().unwrap();
+    result
 }
 
 pub fn ed25519_verify_with_public_key(public_key: Vec<u8>, signature: Vec<u8>, message: Vec<u8>) -> bool {
@@ -39,4 +74,14 @@ pub fn ed25519_verify_with_public_key(public_key: Vec<u8>, signature: Vec<u8>, m
     return public_key_parsed
         .verify(&message, &signature_parsed)
         .is_ok();
+}
+
+pub fn ed25519_verify_with_public_key_threadpool(public_key: Vec<u8>, signature: Vec<u8>, message: Vec<u8>) -> bool {
+    let (sender, receiver) = mpsc::channel();
+    rayon::spawn(move || {
+        let result = ed25519_verify_with_public_key(public_key, signature, message);
+        sender.send(result);
+    });
+    let result = receiver.recv().unwrap();
+    result
 }
