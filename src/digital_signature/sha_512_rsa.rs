@@ -1,4 +1,6 @@
 
+use std::sync::mpsc;
+
 use rand::rngs::OsRng;
 use rsa::{
     pkcs1::{DecodeRsaPublicKey, EncodeRsaPublicKey},
@@ -7,6 +9,7 @@ use rsa::{
 };
 use sha3::{Digest, Sha3_512};
 use super::cas_digital_signature_rsa::{RSADigitalSignatureResult, RSADigitalSignature};
+
 pub struct SHA512RSADigitalSignature;
 
 impl RSADigitalSignature for SHA512RSADigitalSignature {
@@ -38,6 +41,16 @@ impl RSADigitalSignature for SHA512RSADigitalSignature {
         result
     }
 
+    fn digital_signature_rsa_threadpool(rsa_key_size: u32, data_to_sign: Vec<u8>) -> RSADigitalSignatureResult {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let result = <SHA512RSADigitalSignature as RSADigitalSignature>::digital_signature_rsa(rsa_key_size, data_to_sign);
+            sender.send(result);
+        });
+        let result = receiver.recv().unwrap();
+        result
+    }
+
     fn verify_rsa(public_key: String, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool {
         let mut hasher = Sha3_512::new();
         hasher.update(data_to_verify);
@@ -53,5 +66,15 @@ impl RSADigitalSignature for SHA512RSADigitalSignature {
         } else {
             return false;
         }
+    }
+
+    fn verify_rsa_threadpool(public_key: String, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let result = <SHA512RSADigitalSignature as RSADigitalSignature>::verify_rsa(public_key, data_to_verify, signature);
+            sender.send(result);
+        });
+        let result = receiver.recv().unwrap();
+        result
     }
 }

@@ -1,3 +1,5 @@
+use std::sync::mpsc;
+
 use ed25519_dalek::{Keypair, Signature, Signer, Verifier};
 use sha3::{Digest, Sha3_256};
 
@@ -35,5 +37,25 @@ impl ED25519DigitalSignature for SHA256ED25519DigitalSignature {
         return public_key_parsed
             .verify(&sha_hasher_result, &signature_parsed)
             .is_ok();
+    }
+    
+    fn digital_signature_ed25519_threadpool(data_to_sign: Vec<u8>) -> SHAED25519DalekDigitalSignatureResult {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let result = <SHA256ED25519DigitalSignature as ED25519DigitalSignature>::digital_signature_ed25519(data_to_sign);
+            sender.send(result);
+        });
+        let result = receiver.recv().unwrap();
+        result
+    }
+    
+    fn digital_signature_ed25519_verify_threadpool(public_key: Vec<u8>, data_to_verify: Vec<u8>, signature: Vec<u8>) -> bool {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let result = <SHA256ED25519DigitalSignature as ED25519DigitalSignature>::digital_signature_ed25519_verify(public_key, data_to_verify, signature);
+            sender.send(result);
+        });
+        let result = receiver.recv().unwrap();
+        result
     }
 }
