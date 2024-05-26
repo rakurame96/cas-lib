@@ -1,3 +1,5 @@
+use std::sync::mpsc;
+
 use rand::rngs::OsRng;
 use x25519_dalek::{PublicKey, StaticSecret};
 
@@ -30,5 +32,25 @@ impl CASKeyExchange for X25519 {
         let secret_key = StaticSecret::from(secret_key_array);
         let public_key = PublicKey::from(users_public_key_array);
         return secret_key.diffie_hellman(&public_key).as_bytes().to_vec();
+    }
+    
+    fn generate_secret_and_public_key_threadpool() -> x25519SecretPublicKeyResult {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let result = <X25519 as CASKeyExchange>::generate_secret_and_public_key();
+            sender.send(result);
+        });
+        let result = receiver.recv().unwrap();
+        result
+    }
+    
+    fn diffie_hellman_threadpool(my_secret_key: Vec<u8>, users_public_key: Vec<u8>) -> Vec<u8> {
+        let (sender, receiver) = mpsc::channel();
+        rayon::spawn(move || {
+            let result = <X25519 as CASKeyExchange>::diffie_hellman(my_secret_key, users_public_key);
+            sender.send(result);
+        });
+        let result = receiver.recv().unwrap();
+        result
     }
 }
