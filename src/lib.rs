@@ -44,3 +44,8 @@ pub mod message {
     pub mod hmac;
     pub mod cas_hmac;
 }
+
+pub mod signatures {
+    pub mod ed25519;
+    pub mod cas_ed25519;
+}
