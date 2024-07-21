@@ -49,3 +49,7 @@ pub mod signatures {
     pub mod ed25519;
     pub mod cas_ed25519;
 }
+
+pub mod compression {
+    pub mod zstd;
+}
