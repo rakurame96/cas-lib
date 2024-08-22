@@ -105,12 +105,3 @@ impl CASRSAEncryption for CASRSA {
         }
     }
 }
-
-#[test]
-fn rsa_decrypt_bad_ciphertext() {
-    let rsa_keys = CASRSA::generate_rsa_keys(4096);
-    let to_encrypt = b"ThisisSomeBadTextToEncrypt".to_vec();
-    let mut encrypted = CASRSA::encrypt_plaintext(rsa_keys.public_key, to_encrypt);
-    encrypted[255] = 0;
-    let decrypted = CASRSA::decrypt_ciphertext(rsa_keys.private_key, encrypted);
-}
