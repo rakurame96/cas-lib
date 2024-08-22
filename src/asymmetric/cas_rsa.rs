@@ -6,7 +6,7 @@ use rsa::{
     pkcs8::{DecodePrivateKey, EncodePrivateKey},
     RsaPublicKey,
 };
-use rsa::{Pkcs1v15Encrypt, Pkcs1v15Sign, RsaPrivateKey};
+use rsa::{Pkcs1v15Sign, RsaPrivateKey};
 
 use super::{cas_asymmetric_encryption::CASRSAEncryption, types::RSAKeyPairResult};
 
