@@ -53,47 +53,6 @@ impl CASRSAEncryption for CASRSA {
         let thread_result: RSAKeyPairResult = receiver.recv().unwrap();
         thread_result
     }
-    fn encrypt_plaintext(public_key: String, plaintext: Vec<u8>) -> Vec<u8> {
-        let public_key = RsaPublicKey::from_pkcs1_pem(&public_key).unwrap();
-        let mut rng = rand::thread_rng();
-        let ciphertext = public_key
-            .encrypt(&mut rng, Pkcs1v15Encrypt, &plaintext)
-            .unwrap();
-        ciphertext
-    }
-
-    fn encrypt_plaintext_threadpool(public_key: String, plaintext: Vec<u8>) -> Vec<u8> {
-        let (sender, receiver) = mpsc::channel();
-        rayon::spawn(move || {
-            let public_key = RsaPublicKey::from_pkcs1_pem(public_key.as_str()).unwrap();
-            let mut rng = rand::thread_rng();
-            let encrypted_bytes = public_key
-                .encrypt(&mut rng, Pkcs1v15Encrypt, &plaintext)
-                .unwrap();
-            sender.send(encrypted_bytes);
-        });
-        let mut encrypted_bytes = receiver.recv().unwrap();
-        encrypted_bytes
-    }
-
-    fn decrypt_ciphertext(private_key: String, ciphertext: Vec<u8>) -> Vec<u8> {
-        let private_key = RsaPrivateKey::from_pkcs8_pem(&private_key).unwrap();
-        let plaintext = private_key.decrypt(Pkcs1v15Encrypt, &ciphertext).unwrap();
-        plaintext
-    }
-
-    fn decrypt_ciphertext_threadpool(private_key: String, ciphertext: Vec<u8>) -> Vec<u8> {
-        let (sender, receiver) = mpsc::channel();
-        rayon::spawn(move || {
-            let private_key = RsaPrivateKey::from_pkcs8_pem(&private_key).unwrap();
-            let decrypted_bytes = private_key
-                .decrypt(Pkcs1v15Encrypt, &ciphertext)
-                .expect("failed to decrypt");
-            sender.send(decrypted_bytes);
-        });
-        let mut decrypted_bytes = receiver.recv().unwrap();
-        decrypted_bytes
-    }
 
     fn sign(private_key: String, hash: Vec<u8>) -> Vec<u8> {
         let private_key = RsaPrivateKey::from_pkcs8_pem(&private_key).unwrap();
@@ -145,4 +104,13 @@ impl CASRSAEncryption for CASRSA {
             return false;
         }
     }
+}
+
+#[test]
+fn rsa_decrypt_bad_ciphertext() {
+    let rsa_keys = CASRSA::generate_rsa_keys(4096);
+    let to_encrypt = b"ThisisSomeBadTextToEncrypt".to_vec();
+    let mut encrypted = CASRSA::encrypt_plaintext(rsa_keys.public_key, to_encrypt);
+    encrypted[255] = 0;
+    let decrypted = CASRSA::decrypt_ciphertext(rsa_keys.private_key, encrypted);
 }
