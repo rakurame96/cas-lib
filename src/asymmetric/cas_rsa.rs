@@ -1,4 +1,4 @@
-use std::{ffi::CString, sync::mpsc};
+use std::sync::mpsc;
 
 use rand::rngs::OsRng;
 use rsa::{
