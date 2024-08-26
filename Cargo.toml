@@ -28,6 +28,7 @@ rayon = "1.10.0"
 hmac = "0.12.1"
 sha2 = "0.10.8"
 zstd = "0.13"
+hpke = "0.12.0"
 
 [profile.dev.package.num-bigint-dig]
 opt-level = 3
