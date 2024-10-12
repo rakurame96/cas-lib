@@ -53,3 +53,8 @@ pub mod signatures {
 pub mod compression {
     pub mod zstd;
 }
+
+pub mod hybrid {
+    pub mod hpke;
+    pub mod cas_hybrid;
+}
