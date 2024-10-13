@@ -5,5 +5,6 @@ type Aead = AesGcm256;
 type Kdf = HkdfSha512;
 
 pub trait CASHybrid {
-    fn generate_key_pair() -> (Vec<u8>, Vec<u8>);
+    fn generate_key_pair() -> (Vec<u8>, Vec<u8>, Vec<u8>);
+    fn generate_info_str() -> Vec<u8>;
 }
