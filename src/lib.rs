@@ -22,7 +22,6 @@ pub mod symmetric {
 }
 
 pub mod asymmetric {
-    pub mod cas_asymmetric_encryption;
     pub mod cas_rsa;
     pub mod types;
 }

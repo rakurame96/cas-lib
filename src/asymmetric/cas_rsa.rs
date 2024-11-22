@@ -8,7 +8,7 @@ use rsa::{
 };
 use rsa::{Pkcs1v15Sign, RsaPrivateKey};
 
-use super::{cas_asymmetric_encryption::CASRSAEncryption, types::RSAKeyPairResult};
+use super::types::{CASRSAEncryption, RSAKeyPairResult};
 
 pub struct CASRSA;
 
