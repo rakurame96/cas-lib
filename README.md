@@ -12,7 +12,7 @@ We utilize some smart people's existing work and we believe their documentation 
 - [Rust Crypto](https://github.com/RustCrypto)
 - [Rayon](https://github.com/rayon-rs/rayon)
 
-## [Examples]((https://github.com/Cryptographic-API-Services/cas-lib/blob/main/docs/EXAMPLES.md)
+## [Examples](https://github.com/Cryptographic-API-Services/cas-lib/blob/main/docs/EXAMPLES.md)
 
 ## Disclaimer
 Many of the cryptographic crates that are utilized in our core FFI [layer](./src) have never had a security audit performed. Utilize this SDK at your own risk.
