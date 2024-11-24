@@ -65,11 +65,7 @@ impl CASRSAEncryption for CASRSA {
     fn sign_threadpool(private_key: String, hash: Vec<u8>) -> Vec<u8> {
         let (sender, receiver) = mpsc::channel();
         rayon::spawn(move || {
-            let private_key =
-                RsaPrivateKey::from_pkcs8_pem(&private_key).expect("failed to generate a key");
-            let signed_data = private_key
-                .sign(Pkcs1v15Sign::new_unprefixed(), &hash)
-                .unwrap();
+            let signed_data = Self::sign(private_key, hash);
             sender.send(signed_data);
         });
         let signed_data = receiver.recv().unwrap();
@@ -89,13 +85,8 @@ impl CASRSAEncryption for CASRSA {
     fn verify_threadpool(public_key: String, hash: Vec<u8>, signed_text: Vec<u8>) -> bool {
         let (sender, receiver) = mpsc::channel();
         rayon::spawn(move || {
-            let public_key = RsaPublicKey::from_pkcs1_pem(&public_key).unwrap();
-            let verified = public_key.verify(
-                Pkcs1v15Sign::new_unprefixed(),
-                &hash,
-                &signed_text,
-            );
-            sender.send(verified.is_err());
+            let verified = Self::verify(public_key, hash, signed_text);
+            sender.send(verified);
         });
         let verified = receiver.recv().unwrap();
         if verified == false {
