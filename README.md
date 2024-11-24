@@ -3,7 +3,8 @@
 [![image](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/7bXXCQj45q)
 
 ## Overview
-This is our experimental core library which takes advantage of Rust's thread safe nature to provide an abstraction layer to higher level languages to run industry standard crytographic operations sequentially and in parallel. 
+This is our experimental core library which takes advantage of Rust's thread safe nature to provide an abstraction layer to higher level languages to run industry standard crytographic operations sequentially and in parallel.
+This crate does is not us writing crpytography algorthims directly in Rust, rather is it a wrapper layer for the following organizations who have done lots of hard work for us. The main usage of this library is providing a centralized entry point for various langague FFI layers throughout CAS [C FFI](https://github.com/Cryptographic-API-Services/cas-core-lib), [Typescript](https://github.com/Cryptographic-API-Services/cas-typescript-sdk), [Python](https://github.com/Cryptographic-API-Services/cas-python-sdk).
 
 ## Consuming Library Documentation
 We utilize some smart people's existing work and we believe their documentation should be reviewed when possible.
