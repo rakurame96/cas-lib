@@ -1,6 +1,36 @@
 # Examples 
 
-# AES-256 GCM Mode
+## Password Hashers
+### Argon2
+```rust
+use cas_lib::password_hashers::{argon2::CASArgon, cas_password_hasher::CASPasswordHasher};
+
+fn main() {
+let password_to_hash = "HashThisBadPassword".to_string();
+let hash = CASArgon::hash_password(password_to_hash);
+println!("{}", hash)
+}
+```
+### BCrypt
+```rust
+use cas_lib::password_hashers::{bcrypt::CASBCrypt, cas_password_hasher::CASPasswordHasher};
+
+let password_to_hash = "HashThisBadPassword".to_string();
+let hash = CASBCrypt::hash_password(password_to_hash);
+println!("{}", hash);
+```
+### SCrypt
+```rust
+use cas_lib::password_hashers::{bcrypt::CASScrypt, cas_password_hasher::CASPasswordHasher};
+
+let password_to_hash = "HashThisBadPassword".to_string();
+let hash = CASScrypt::hash_password(password_to_hash);
+println!("{}", hash);
+```
+
+
+## Symmetric 
+### AES-256 GCM Mode
 ```rust
 use std::{fs::{File}, io::Write, path::Path};
 
