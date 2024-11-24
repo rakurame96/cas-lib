@@ -19,4 +19,4 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: Run tests
-      run: cargo publish --token ${secrets.TOKEN}
+      run: cargo publish --token ${{ secrets.TOKEN }}
