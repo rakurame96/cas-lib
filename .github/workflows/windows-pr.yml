@@ -1,4 +1,4 @@
-name: Rust
+name: Rust PR Windows
 
 on:
   pull_request:

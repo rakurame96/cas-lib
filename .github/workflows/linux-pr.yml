@@ -1,4 +1,4 @@
-name: Rust
+name: Rust PR Linux
 
 on:
   pull_request:
