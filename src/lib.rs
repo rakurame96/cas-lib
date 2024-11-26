@@ -3,6 +3,7 @@ pub mod password_hashers {
     pub mod bcrypt;
     pub mod cas_password_hasher;
     pub mod scrypt;
+    pub mod pbkdf2;
 }
 
 pub mod hashers {
