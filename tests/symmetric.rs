@@ -6,7 +6,7 @@ use cas_lib::symmetric::{aes::CASAES256, cas_symmetric_encryption::CASAESEncrypt
 mod tests {
     use super::*;
     #[test]
-    fn test_sym() {
+    fn test_aes_256() {
         let path = Path::new("tests/test.docx");
         let file_bytes: Vec<u8> = std::fs::read(path).unwrap();
         let aes_nonce = <CASAES256 as CASAESEncryption>::generate_nonce();
