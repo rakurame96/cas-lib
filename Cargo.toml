@@ -40,3 +40,6 @@ version = "1"
 
 [build-dependencies]
 napi-build = "1"
+
+[profile.dev]
+opt-level = 2
